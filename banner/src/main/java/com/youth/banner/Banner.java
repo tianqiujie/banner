@@ -72,13 +72,16 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
 
     private WeakHandler handler = new WeakHandler();
 
+
     public Banner(Context context) {
         this(context, null);
     }
 
+
     public Banner(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
+
 
     public Banner(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -91,6 +94,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         indicatorSize = dm.widthPixels / 80;
         initView(context, attrs);
     }
+
 
     private void initView(Context context, AttributeSet attrs) {
         imageViews.clear();
@@ -105,6 +109,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         numIndicatorInside = (TextView) view.findViewById(R.id.numIndicatorInside);
         initViewPagerScroll();
     }
+
 
     private void handleTypedArray(Context context, AttributeSet attrs) {
         if (attrs == null) {
@@ -128,6 +133,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         typedArray.recycle();
     }
 
+
     private void initViewPagerScroll() {
         try {
             Field mField = ViewPager.class.getDeclaredField("mScroller");
@@ -146,15 +152,18 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         return this;
     }
 
+
     public Banner setImageLoader(ImageLoaderInterface imageLoader) {
         this.imageLoader = imageLoader;
         return this;
     }
 
+
     public Banner setDelayTime(int delayTime) {
         this.delayTime = delayTime;
         return this;
     }
+
 
     public Banner setIndicatorGravity(int type) {
         switch (type) {
@@ -171,6 +180,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         return this;
     }
 
+
     public Banner setBannerAnimation(Class<? extends PageTransformer> transformer) {
         try {
             setPageTransformer(true, transformer.newInstance());
@@ -179,6 +189,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
         return this;
     }
+
 
     /**
      * Set the number of pages that should be retained to either side of the
@@ -195,14 +206,15 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         return this;
     }
 
+
     /**
      * Set a {@link PageTransformer} that will be called for each attached page whenever
      * the scroll position is changed. This allows the application to apply custom property
      * transformations to each page, overriding the default sliding look and feel.
      *
      * @param reverseDrawingOrder true if the supplied PageTransformer requires page views
-     *                            to be drawn from last to first instead of first to last.
-     * @param transformer         PageTransformer that will modify each page's animation properties
+     * to be drawn from last to first instead of first to last.
+     * @param transformer PageTransformer that will modify each page's animation properties
      * @return Banner
      */
     public Banner setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer) {
@@ -210,26 +222,31 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         return this;
     }
 
+
     public Banner setBannerTitles(List<String> titles) {
         this.titles = titles;
         return this;
     }
+
 
     public Banner setBannerStyle(int bannerStyle) {
         this.bannerStyle = bannerStyle;
         return this;
     }
 
+
     public Banner setViewPagerIsScroll(boolean isScroll) {
         this.isScroll = isScroll;
         return this;
     }
+
 
     public Banner setImages(List<?> imageUrls) {
         this.imageUrls = imageUrls;
         this.count = imageUrls.size();
         return this;
     }
+
 
     public void update(List<?> imageUrls, List<String> titles) {
         this.imageUrls.clear();
@@ -240,12 +257,14 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         start();
     }
 
+
     public void update(List<?> imageUrls) {
         this.imageUrls.clear();
         this.imageUrls.addAll(imageUrls);
         this.count = imageUrls.size();//this.imageUrls.size();
         start();
     }
+
 
     public void updateBannerStyle(int bannerStyle) {
         indicator.setVisibility(GONE);
@@ -258,12 +277,14 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         start();
     }
 
+
     public Banner start() {
         setBannerStyleUI();
         setImageList(imageUrls);
         setData();
         return this;
     }
+
 
     private void setTitleStyleUI() {
         if (titles.size() != imageUrls.size()) {
@@ -288,10 +309,14 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
     }
 
+
     private void setBannerStyleUI() {
         int visibility;
-        if (count > 1) visibility = View.VISIBLE;
-        else visibility = View.GONE;
+        if (count > 1) {
+            visibility = View.VISIBLE;
+        } else {
+            visibility = View.GONE;
+        }
         switch (bannerStyle) {
             case BannerConfig.CIRCLE_INDICATOR:
                 indicator.setVisibility(visibility);
@@ -314,11 +339,12 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
     }
 
+
     private void initImages() {
         imageViews.clear();
         if (bannerStyle == BannerConfig.CIRCLE_INDICATOR ||
-                bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE ||
-                bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE) {
+            bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE ||
+            bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE) {
             createIndicator();
         } else if (bannerStyle == BannerConfig.NUM_INDICATOR_TITLE) {
             numIndicatorInside.setText("1/" + count);
@@ -326,6 +352,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
             numIndicator.setText("1/" + count);
         }
     }
+
 
     private void setImageList(List<?> imagesUrl) {
         if (imagesUrl == null || imagesUrl.size() <= 0) {
@@ -351,12 +378,17 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
                 url = imagesUrl.get(i - 1);
             }
             imageViews.add(imageView);
-            if (imageLoader != null)
+            if (imageLoader != null) {
+                if(url instanceof BannerItem){
+                    url = ((BannerItem) url).getUrl();
+                }
                 imageLoader.displayImage(context, url, imageView);
-            else
+            } else {
                 Log.e(tag, "Please set images loader.");
+            }
         }
     }
+
 
     private void setScaleType(View imageView) {
         if (imageView instanceof ImageView) {
@@ -391,6 +423,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
     }
 
+
     private void createIndicator() {
         indicatorImages.clear();
         indicator.removeAllViews();
@@ -408,10 +441,11 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
             }
             indicatorImages.add(imageView);
             if (bannerStyle == BannerConfig.CIRCLE_INDICATOR ||
-                    bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE)
+                bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE) {
                 indicator.addView(imageView, params);
-            else if (bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE)
+            } else if (bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE) {
                 indicatorInside.addView(imageView, params);
+            }
         }
     }
 
@@ -425,15 +459,17 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         viewPager.setAdapter(adapter);
         viewPager.setFocusable(true);
         viewPager.setCurrentItem(1);
-        if (gravity != -1)
+        if (gravity != -1) {
             indicator.setGravity(gravity);
+        }
         if (isScroll && count > 1) {
             viewPager.setScrollable(true);
         } else {
             viewPager.setScrollable(false);
         }
-        if (isAutoPlay)
+        if (isAutoPlay) {
             startAutoPlay();
+        }
     }
 
 
@@ -442,16 +478,18 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         handler.postDelayed(task, delayTime);
     }
 
+
     public void stopAutoPlay() {
         handler.removeCallbacks(task);
     }
+
 
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
             if (count > 1 && isAutoPlay) {
                 currentItem = currentItem % (count + 1) + 1;
-//                Log.i(tag, "curr:" + currentItem + " count:" + count);
+                //                Log.i(tag, "curr:" + currentItem + " count:" + count);
                 if (currentItem == 1) {
                     viewPager.setCurrentItem(currentItem, false);
                     handler.post(task);
@@ -463,13 +501,14 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
     };
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-//        Log.i(tag, ev.getAction() + "--" + isAutoPlay);
+        //        Log.i(tag, ev.getAction() + "--" + isAutoPlay);
         if (isAutoPlay) {
             int action = ev.getAction();
             if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
-                    || action == MotionEvent.ACTION_OUTSIDE) {
+                || action == MotionEvent.ACTION_OUTSIDE) {
                 startAutoPlay();
             } else if (action == MotionEvent.ACTION_DOWN) {
                 stopAutoPlay();
@@ -478,18 +517,20 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         return super.dispatchTouchEvent(ev);
     }
 
+
     /**
      * 返回真实的位置
      *
-     * @param position
      * @return 下标从0开始
      */
     public int toRealPosition(int position) {
         int realPosition = (position - 1) % count;
-        if (realPosition < 0)
+        if (realPosition < 0) {
             realPosition += count;
+        }
         return realPosition;
     }
+
 
     class BannerPagerAdapter extends PagerAdapter {
 
@@ -498,10 +539,12 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
             return imageViews.size();
         }
 
+
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
+
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
@@ -528,12 +571,14 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
             return view;
         }
 
+
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
 
     }
+
 
     @Override
     public void onPageScrollStateChanged(int state) {
@@ -561,6 +606,7 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
     }
 
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (mOnPageChangeListener != null) {
@@ -568,14 +614,15 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         }
     }
 
+
     @Override
     public void onPageSelected(int position) {
         if (mOnPageChangeListener != null) {
             mOnPageChangeListener.onPageSelected(position);
         }
         if (bannerStyle == BannerConfig.CIRCLE_INDICATOR ||
-                bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE ||
-                bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE) {
+            bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE ||
+            bannerStyle == BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE) {
             indicatorImages.get((lastPosition - 1 + count) % count).setImageResource(mIndicatorUnselectedResId);
             indicatorImages.get((position - 1 + count) % count).setImageResource(mIndicatorSelectedResId);
             lastPosition = position;
@@ -608,24 +655,25 @@ public class Banner extends FrameLayout implements OnPageChangeListener {
         return this;
     }*/
 
+
     /**
      * 废弃了旧版接口，新版的接口下标是从1开始，同时解决下标越界问题
-     *
-     * @param listener
-     * @return
      */
     public Banner setOnBannerListener(OnBannerListener listener) {
         this.listener = listener;
         return this;
     }
 
-    public void clearListener(){
+
+    public void clearListener() {
         this.listener = null;
     }
+
 
     public void setOnPageChangeListener(OnPageChangeListener onPageChangeListener) {
         mOnPageChangeListener = onPageChangeListener;
     }
+
 
     public void releaseBanner() {
         handler.removeCallbacksAndMessages(null);
